@@ -60,7 +60,7 @@
             [self askForPushRegistration];
         }
     }
-
+    
 }
 
 - (void)askForPushRegistrationWithSuccess:(void (^)())success failure:(void (^)())failure{
@@ -70,7 +70,13 @@
 }
 
 - (void)askForPushRegistration{
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge)];
+    
+    if(SYSTEM_VERSION_LESS_THAN(_iOS_8_0)){
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge)];
+    } else{
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+    
     self.retries = 3;
 }
 
@@ -113,5 +119,7 @@
         [[Environment preferences] setRevokedPushPermission:YES];
     }
 }
+
+
 
 @end
