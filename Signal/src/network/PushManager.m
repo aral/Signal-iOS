@@ -72,7 +72,7 @@
     if(SYSTEM_VERSION_LESS_THAN(_iOS_8_0)){
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge)];
     } else{
-        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_7_1
         UIMutableUserNotificationAction *action_accept = [[UIMutableUserNotificationAction alloc]init];
         action_accept.identifier = @"Signal_Call_Accept";
         action_accept.title      = @"Pick up";
@@ -94,7 +94,10 @@
         NSSet *categories = [NSSet setWithObject:callCategory];
         
         [[UIApplication sharedApplication] registerForRemoteNotifications];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIRemoteNotificationTypeAlert|UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound) categories:categories]];        
+        [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIRemoteNotificationTypeAlert|UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound) categories:categories]];
+        
+#endif
+
     }
     
     self.retries = 3;
