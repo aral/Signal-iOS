@@ -34,9 +34,7 @@
     UIRemoteNotificationType notificationTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
     
     BOOL needsPushSettingChangeAlert = NO;
-    
-    // enhancement: do custom message depending on the setting?
-    
+
     if (notificationTypes == UIRemoteNotificationTypeNone) {
         needsPushSettingChangeAlert = YES;
     } else if (notificationTypes == UIRemoteNotificationTypeBadge) {
@@ -74,7 +72,29 @@
     if(SYSTEM_VERSION_LESS_THAN(_iOS_8_0)){
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge)];
     } else{
+        
+        UIMutableUserNotificationAction *action_accept = [[UIMutableUserNotificationAction alloc]init];
+        action_accept.identifier = @"Signal_Call_Accept";
+        action_accept.title      = @"Pick up";
+        action_accept.activationMode = UIUserNotificationActivationModeForeground;
+        action_accept.destructive    = YES;
+        action_accept.authenticationRequired = NO;
+        
+        UIMutableUserNotificationAction *action_decline = [[UIMutableUserNotificationAction alloc]init];
+        action_decline.identifier = @"Signal_Call_Decline";
+        action_decline.title      = @"Pick up";
+        action_decline.activationMode = UIUserNotificationActivationModeForeground;
+        action_decline.destructive    = YES;
+        action_decline.authenticationRequired = NO;
+        
+        UIMutableUserNotificationCategory *callCategory = [[UIMutableUserNotificationCategory alloc] init];
+        callCategory.identifier = @"Signal_IncomingCall";
+        [callCategory setActions:@[action_accept, action_decline] forContext:UIUserNotificationActionContextDefault];
+        
+        NSSet *categories = [NSSet setWithObject:callCategory];
+        
         [[UIApplication sharedApplication] registerForRemoteNotifications];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIRemoteNotificationTypeAlert|UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound) categories:categories]];        
     }
     
     self.retries = 3;
